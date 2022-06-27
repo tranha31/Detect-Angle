@@ -10,7 +10,7 @@ class Image:
         self.saveName = saveName
         self.isDisturbance = isDisturbance
 
-    def findObject(self, name, img):
+    def findObject(self, name, img, corner):
         image = cv2.imread(name)
         oPIA = ProcessImg3_Add()
         finalImage = oPIA.findObject(image, self.isDisturbance)
@@ -19,14 +19,14 @@ class Image:
 
         cv2.imwrite("phone.png", finalImage["phone"])
         cv2.imwrite("remote.png", finalImage["remote"])
-        self.findAngle("phone.png", "remote.png", img)
+        self.findAngle("phone.png", "remote.png", img, corner)
     
-    def findAngle(self, phoneName, remoteName, img):
+    def findAngle(self, phoneName, remoteName, img, corner):
         phone = cv2.imread(phoneName)
         remote = cv2.imread(remoteName)
         oPIA = ProcessImg3_Add()
-        linePhone = oPIA.findPhoneAngle(phone)
-        lineRemote = oPIA.findRemoteAngle(remote)
+        linePhone = oPIA.findPhoneAngle(phone, corner)
+        lineRemote = oPIA.findRemoteAngle(remote, corner)
         os.remove(phoneName)
         os.remove(remoteName)
 
@@ -57,12 +57,12 @@ class Img3_Add(Image):
     def __init__(self, saveName, isDisturbance):
         super().__init__(saveName, isDisturbance)
 
-    def detectAngleDisturbance(self):
+    def detectAngleDisturbance(self, corner):
         img = cv2.imread(self.saveName)
         oPIA = ProcessImg3_Add()
         image = oPIA.disturbanceHandler(img)
         cv2.imwrite("disturbance.png", image)
-        self.findObject("disturbance.png", img)
+        self.findObject("disturbance.png", img, corner)
     
     
 
@@ -70,21 +70,27 @@ class ImageOther(Image):
     def __init__(self, saveName, isDisturbance):
         super().__init__(saveName, isDisturbance)
 
-    def detectAngle(self):
+    def detectAngle(self, corner):
         img = cv2.imread(self.saveName)
 
-        self.findObject(self.saveName, img)
+        self.findObject(self.saveName, img, corner)
     
     
 
 img3Add = Img3_Add("img3_add.png", True)
-# img3Add.detectAngleDisturbance()
+# img3Add.detectAngleDisturbance(0)
 
 img3_bruit = ImageOther("img3_bruit.png", False)
-# img3_bruit.detectAngle()
+# img3_bruit.detectAngle(0)
 
 img3_bruit2 = ImageOther("img3_bruit2.png", False)
-# img3_bruit2.detectAngle()
+# img3_bruit2.detectAngle(0)
 
 img4 = ImageOther("img4.png", False)
-img4.detectAngle()
+# img4.detectAngle()
+
+img3_bruit_test = ImageOther("img3_bruit_test.png", False)
+# img3_bruit_test.detectAngle(1)
+
+img3Add_test = Img3_Add("img3_add_test.png", True)
+img3Add_test.detectAngleDisturbance(1)

@@ -173,18 +173,33 @@ class ProcessImg3_Add:
         return oObject
 
     # Xác định cạnh của điện thoại
-    def findPhoneAngle(self, img):
+    def findPhoneAngle(self, img, corner):
         equations = self.findLine(img)
-        result = list(filter(lambda x: math.atan(-x['line'][0]/x['line'][1])*(180/np.pi) <= 0, equations))
-        line = min(result, key=lambda x:x['rho'])
-        return line
+        result = []
+        if corner == 0:
+            result = list(filter(lambda x: math.atan(-x['line'][0]/x['line'][1])*(180/np.pi) <= 0, equations))
+            line = min(result, key=lambda x:x['rho'])
+            return line
+        else:
+            result = list(filter(lambda x: math.atan(-x['line'][0]/x['line'][1])*(180/np.pi) > 0, equations))
+            line = max(result, key=lambda x:x['rho'])
+            return line
+        
     
     # Xác định cạnh của điều khiển
-    def findRemoteAngle(self, img):
+    def findRemoteAngle(self, img, corner):
         equations = self.findLine(img)
-        result = list(filter(lambda x: math.atan(-x['line'][0]/x['line'][1])*(180/np.pi) <= 0, equations))
-        line = max(result, key=lambda x:x['rho'])
-        return line
+        result = []
+        if corner == 0:
+            result = list(filter(lambda x: math.atan(-x['line'][0]/x['line'][1])*(180/np.pi) <= 0, equations))
+            line = max(result, key=lambda x:x['rho'])
+            return line
+        else:
+            result = list(filter(lambda x: math.atan(-x['line'][0]/x['line'][1])*(180/np.pi) > 0, equations))
+            line = min(result, key=lambda x:x['rho'])
+            return line
+        
+        
     
     # Xác định đường thẳng trên ảnh
     def findLine(self, image):
